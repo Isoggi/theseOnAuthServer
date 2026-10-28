@@ -1,0 +1,16 @@
+@theseOnAuthServer_HostAddress = https://localhost:7146
+
+### Create an account
+POST {{theseOnAuthServer_HostAddress}}/register
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "a-long-example-password"
+}
+
+### Log in and issue an OpenIddict access token
+POST {{theseOnAuthServer_HostAddress}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=theseOnAuthServer&username=alice&password=a-long-example-password&scope=openid%20profile

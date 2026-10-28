@@ -1,0 +1,24 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+[Pp]ublish/
+
+# IDE and user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test output
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Local logs and secrets
+*.log
+*.pfx
+*.p12
+secrets.json
