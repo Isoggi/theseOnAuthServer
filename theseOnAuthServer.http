@@ -1,16 +1,40 @@
 @theseOnAuthServer_HostAddress = https://localhost:7146
 
-### Create an account
+### Register with username, email, and password
 POST {{theseOnAuthServer_HostAddress}}/register
 Content-Type: application/json
 
 {
   "username": "alice",
+  "email": "alice@example.com",
   "password": "a-long-example-password"
 }
 
-### Log in and issue an OpenIddict access token
+### Log in with username or email and issue OpenIddict tokens
 POST {{theseOnAuthServer_HostAddress}}/connect/token
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=password&client_id=theseOnAuthServer&username=alice&password=a-long-example-password&scope=openid%20profile
+grant_type=password&client_id=theseOnAuthServer&username=alice&password=a-long-example-password&scope=openid%20profile%20email
+
+### Start SPA login in a browser (generate PKCE S256 challenge, state, and nonce in the SPA)
+GET {{theseOnAuthServer_HostAddress}}/connect/authorize?client_id=theseOnOAuth&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&scope=openid%20profile%20email&code_challenge={{code_challenge}}&code_challenge_method=S256&state={{state}}&nonce={{nonce}}
+
+### Exchange the authorization code in the SPA using its original code_verifier
+POST {{theseOnAuthServer_HostAddress}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&client_id=theseOnOAuth&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&code={{authorization_code}}&code_verifier={{code_verifier}}
+
+### Request a magic link (SMTP and MagicLinks:CallbackUrl must be configured)
+POST {{theseOnAuthServer_HostAddress}}/auth/magic-link
+Content-Type: application/json
+
+{
+  "email": "alice@example.com"
+}
+
+### Exchange the token from the email callback URL (single-use)
+POST {{theseOnAuthServer_HostAddress}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=magic_link&client_id=theseOnAuthServer&magic_token={{magic_link_token}}&scope=openid%20profile%20email
